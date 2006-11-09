@@ -107,9 +107,8 @@ module Pling
     end
     
     def set(x,y,*color)
-      raise "too big" if x >= width
-      raise "too big" if y >= height
-      raise "wrong count "+color.inspect if color.size != 3
+      return if x >= width || y >= height || x < 0 || y < 0
+      raise "wrong color count "+color.inspect if color.size != 3
       
       # Translate, bottom left ist 0,0
       y = (height-1) - y

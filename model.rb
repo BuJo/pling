@@ -28,6 +28,17 @@ module Pling
       @renderer.set(x, y, *@color)
     end
     
+    def length
+      Math.sqrt((@p1.x - @p2.x).abs**2 + (@p1.y - @p2.y).abs**2)
+    end
+    
+    def height
+      [@p1.y, @p2.y].sort.reverse
+    end
+    
+    def <=>(o)
+      length <=> o.length
+    end
     
     # y = ax + b
     def plot_line(p, q)
@@ -48,8 +59,8 @@ module Pling
       dx = q.x - p.x;
       dy = q.y - p.y;
       
-      if (dx > 0) then inc_x= 1; else inc_x=-1; end
-      if (dy > 0) then inc_y= 1; else inc_y=-1; end
+      if (dx > 0) then inc_x = 1; else inc_x = -1; end
+      if (dy > 0) then inc_y = 1; else inc_y = -1; end
         
       # flach nach oben oder flach nach unten
       if (dy.abs < dx.abs)
@@ -82,6 +93,11 @@ module Pling
   
   class Polygon < Model
     attr_accessor :points
+    attr_accessor :edges
+    
+    def initialize(*points)
+      @points = points
+    end
     
     def points
       @points ||= []
@@ -93,9 +109,27 @@ module Pling
       end
     end
     
+    def translate(*tlations)
+      p @points
+      tlations.each do |t|
+        @points = points.map do |p|
+          puts [t, p, t * p].inspect
+          t * p
+        end
+      end
+      @points.each {|x| x.round }
+      p @points
+    end
+    
     def lines
+      if edges
+        return edges.map do |p1,p2|
+          Line.new(points[p1],points[p2], *@color)
+        end
+      end
+      
       points = @points.dup
-      points << @points.first.dup if @points.first != @points.last
+      points << @points.first.dup if points.first != points.last
       
       lines = []
       

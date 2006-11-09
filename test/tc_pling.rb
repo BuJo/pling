@@ -110,6 +110,32 @@ TBL
     renderer.save('poly.pnm')
   end
   
+  def test_poly_transformations
+    ppm = PPM.new(:mode => :ascii) do |a|
+      a.width = 100
+      a.height = 100
+      a.max_color = 255
+      a.allocate_data
+      a.out = ""
+    end
+    
+    renderer = Renderer.new(ppm)
+    
+    poly = Polygon.new
+    poly.color = [0,100,255]
+    poly.points << Quaternion[0,3] << Quaternion[2,80] << Quaternion[70,60] << Quaternion[40,3]
+    poly.edges = [[0,1], [1,2], [2, 3], [3, 0]]
+
+    line = Line.new(Quaternion[1,1], Quaternion[80,90], 255,0,255)
+    
+    renderer.objects << [poly.dup, trans(20,50,0)]
+    renderer.objects << [poly.dup, scale(0.6, 0.6, 0)]
+    renderer.objects << [poly.dup, rotz(-20)]
+    
+    renderer.render_objects
+    renderer.save('poly_translated.pnm')
+  end
+  
   def test_circle
     ppm = PPM.new(:mode => :ascii) do |a|
       a.width = 10
