@@ -110,15 +110,12 @@ module Pling
     end
     
     def translate(*tlations)
-      p @points
       tlations.each do |t|
         @points = points.map do |p|
-          puts [t, p, t * p].inspect
           t * p
         end
       end
       @points.each {|x| x.round }
-      p @points
     end
     
     def lines

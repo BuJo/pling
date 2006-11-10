@@ -27,8 +27,8 @@ SDLOBJ << '/sw/lib/libSDLmain.a'
 task :sdl => ['a.out']
 
 CC = "gcc"
-CFLAGS = " -g -O2 -I/sw/include #{`sdl-config --cflags`.chomp} #{`pkg-config cairo --cflags`.chomp} "
-LDFLAGS =  " -L/sw/lib #{`sdl-config --libs`.chomp} #{`pkg-config cairo --libs`.chomp} -lSDL_image-1.2.0 "
+CFLAGS = " -g -O2 -Wall -I/sw/include #{`sdl-config --cflags`.chomp} #{`pkg-config cairo --cflags`.chomp} "
+LDFLAGS =  " -Wall -L/sw/lib #{`sdl-config --libs`.chomp} #{`pkg-config cairo --libs`.chomp} -lSDL_image-1.2.0 "
 
 rule '.o' => '.c' do |t|
   sh "#{CC} #{CFLAGS} -c -o #{t.name} #{t.source}"

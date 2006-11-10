@@ -3,6 +3,7 @@
 require 'tempfile'
 require 'matrix'
 
+require 'util'
 require 'model'
 require 'framebuffer'
 
@@ -54,36 +55,36 @@ end
 if $0 == __FILE__
   include Pling
   
-  #ppm = PPM.new(:mode => :binary) do |a|
-  #  a.width = 100
-  #  a.height = 100
-  #  a.max_color = 255
-  #  a.allocate_data
-  #  a.out = ""
-  #end
-  #
-  #renderer = Renderer.new(ppm)
-  #
-  #circle = Circle.new(Quaternion[50,55],40)
-  #circle.color = [200,100,20]
-  #
-  #circle2 = Circle.new(Quaternion[40,60],20)
-  #circle2.color = [100,10,230]
-  #
-  #poly = Polygon.new
-  #poly.color = [0,100,255]
-  #poly.points << Quaternion[0,3] << Quaternion[2,80] << Quaternion[70,60] << Quaternion[40,3]
-  #poly.edges = [[0,1], [1,2], [2, 3], [3, 0]]
-  #
-  #line = Line.new(Quaternion[1,1], Quaternion[80,90], 255,0,255)
-  #
-  #renderer.objects << [poly.dup, trans(20,50,0)] << circle << circle2 << line
-  #renderer.objects << [poly.dup, scale(0.6, 0.6, 0)]
-  #renderer.objects << [poly.dup, rotz(-20)]
-  #
-  #renderer.render_objects
-  #puts "Time to Render: #{renderer.ttr} seconds"
-  #renderer.save('pling.pnm')
+  ppm = PPM.new(:mode => :binary) do |a|
+    a.width = 100
+    a.height = 100
+    a.max_color = 255
+    a.allocate_data
+    a.out = ""
+  end
+  
+  renderer = Renderer.new(ppm)
+  
+  circle = Circle.new(Quaternion[50,55],40)
+  circle.color = [200,100,20]
+  
+  circle2 = Circle.new(Quaternion[40,60],20)
+  circle2.color = [100,10,230]
+  
+  poly = Polygon.new
+  poly.color = [0,100,255]
+  poly.points << Quaternion[0,3] << Quaternion[2,80] << Quaternion[70,60] << Quaternion[40,3]
+  poly.edges = [[0,1], [1,2], [2, 3], [3, 0]]
+  
+  line = Line.new(Quaternion[1,1], Quaternion[80,90], 255,0,255)
+  
+  renderer.objects << [poly.dup, trans(20,50,0)] << circle << circle2 << line
+  renderer.objects << [poly.dup, scale(0.6, 0.6, 0)]
+  renderer.objects << [poly.dup, rotz(-20)]
+  
+  renderer.render_objects
+  puts "Time to Render: #{renderer.ttr} seconds"
+  renderer.save('pling.pnm')
   
   ppm = PPM.new(:mode => :binary) do |a|
     a.width = 100
@@ -100,22 +101,11 @@ if $0 == __FILE__
   renderer.objects << Line.new(Quaternion[0,50], Quaternion[100,50], 255,255,255)
   renderer.objects << Line.new(Quaternion[50,0], Quaternion[50,100], 255,255,255)
   
-  a = deg_to_rad(-90)
-  tr = Matrix[
-    [Math.cos(a), Math.sin(a), 0, 0],
-    [-Math.sin(a), Math.cos(a)*0.5, 0, 0],
-    [0, 0, 1, 0],
-    [-16, 8, 0, 1]
-  ].transpose
+  tr = trans(-16, 8, 0) * scale(1, 0.5, 1) * rotz(-90)
   
   renderer.objects << poly
-  #renderer.objects << [poly.dup, trans(-50,-50, 0), rotz(-90), trans(50,50, 0)]
-  #renderer.objects << [poly.dup, trans(-50,-50, 0), scale(1, 0.5, 1), trans(50,50, 0)]
-  #renderer.objects << [poly.dup, trans(-50,-50, 0), rotz(-90), scale(1, 0.5, 1), trans(50,50, 0)]
-  #renderer.objects << [poly.dup, trans(-50,-50, 0), rotz(-90), scale(1, 0.5, 1), trans(-16, 8, 0), trans(50,50, 0)]
   renderer.objects << [poly.dup, trans(-50,-50, 0), tr, trans(50,50, 0)]
-  #renderer.objects << [poly.dup, scale(0.5, 1, 1)]
-  #p renderer.objects
+  
   renderer.render_objects
   puts "Time to Render: #{renderer.ttr} seconds"
   renderer.save('aufgabe.pnm')

@@ -1,4 +1,6 @@
 require 'test/unit'
+$:.unshift File.dirname(__FILE__)+'/..'
+$UNITTEST = true
 require 'pling'
 
 class TestLibraryFileName < Test::Unit::TestCase
@@ -166,6 +168,31 @@ TBL
     assert_nothing_raised do
       Renderer.new(PPM.new)
     end
+  end
+  
+  def test_matrix_rotz
+    x, y, z, rz = 10, 20, 30, 40
+    rz1 = deg_to_rad(rz)
+    b = Matrix[[1, 0, 0, -x], [0, 1, 0, -y], [0, 0, 1, -z], [0, 0, 0, 1]]
+    a = Matrix[[1, 0, 0, x], [0, 1, 0, y], [0, 0, 1, z], [0, 0, 0, 1]]
+    s = Matrix[[Math.cos(rz1), -Math.sin(rz1), 0, 0], [Math.sin(rz1), Math.cos(rz1), 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+    
+    ref = Matrix[
+      [0.7660444431, -0.6427876097, 0.0, -15.19530776],
+      [0.6427876097, 0.7660444431, 0.0, 1.74876496],
+      [0.0, 0.0, 1.0, 0.0],
+      [0.0, 0.0, 0.0, 1.0]
+    ]
+    
+    assert_equal ref, b * s * a
+    
+    a2, s2, b2 = trans(x, y, z), rotz(rz), trans(-x, -y, -z)
+    
+    assert_equal a, a2
+    assert_equal b, b2
+    assert_equal s, s2, "Rotation Matrix wrong"
+    
+    assert_equal ref, b2 * s2 * a2
   end
   
 end
