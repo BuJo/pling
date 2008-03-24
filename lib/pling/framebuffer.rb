@@ -2,7 +2,6 @@ require 'util'
 
 module Pling
   
-  
   class Framebuffer
     attr_accessor :width, :height
     attr_accessor :out
@@ -22,6 +21,7 @@ module Pling
     end
   end
   
+  # General Format
   class PNM < Framebuffer
     attr_accessor :magic_value, :comment
     attr_reader :data, :options
@@ -29,7 +29,9 @@ module Pling
     def initialize(options = {:mode => :binary})
       @options = options
       @comment = options[:comment] || options[:filename]
+      @out = ""
       yield self if block_given?
+      allocate_data
     end
     
     def header
@@ -48,8 +50,24 @@ module Pling
       @data[y][x]
     end
     
+    def set(x, y, *args)
+      return if x >= width || y >= height || x < 0 || y < 0
+      
+      # Translate, bottom left ist 0,0
+      y = (height-1) - y
+      
+      @data[y][x] = *args
+    end
+    
+    def write_binary
+      raise NotImplementedError
+    end
+    def write_ascii
+      raise NotImplementedError
+    end
   end
   
+  # Black/White Image
   class PBM < PNM
     MAGIC_VALUES = {
       :ascii => 'P1',
@@ -60,8 +78,23 @@ module Pling
       @magic_value = MAGIC_VALUES[options[:mode]]
       super
     end
+    
+    def write_ascii
+      out = ''
+      
+      for row in (0...height) do
+        for col in (0...width) do
+          out << @data[row][col].map {|x| x ? '1' : '0' }.join(' ')
+          out << ' ' if col < (width - 1)
+        end
+        out << "\n"
+      end
+      
+      return out
+    end
   end
   
+  # Greyscale Image
   class PGM < PNM
     attr_accessor :max_grey
     
@@ -81,8 +114,23 @@ module Pling
       out << "#{max_grey}\n"
     end
     
+    def write_ascii
+      out = ''
+      
+      for row in (0...height) do
+        for col in (0...width) do
+          out << @data[row][col].join(' ')
+          out << ' ' if col < (width - 1)
+        end
+        out << "\n"
+      end
+      
+      return out
+    end
+    
   end
   
+  # Color Image
   class PPM < PNM
     attr_accessor :max_color
     

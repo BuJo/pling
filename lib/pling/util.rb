@@ -22,7 +22,7 @@ class Vector
     end
   end
   
-  def round
+  def round!
     @elements.map! {|x| x.respond_to?(:round) ? x.round : x }
   end
   
@@ -46,6 +46,8 @@ class Vector
     Vector.elements(@elements, true)
   end
 if $UNITTEST
+  # Use much heavier compare functions to accomodate for Float comparisons
+  
   DELTA = 0.00001
   
   def ==(o)
@@ -62,24 +64,17 @@ if $UNITTEST
       if [@elements[i], elements[i]].any? {|x| x.kind_of?(Float) }
         return false if (@elements[i] - elements[i]).abs > DELTA
       else
-        return false unless @elements[i] == elements[i]
+        return false if @elements[i] != elements[i]
       end
     end
     return true
   end
 end
-  def scales?
-    det != 1
-  end
-  
-  def rotates?
-    det == 1
-  end
-  
 end
 Quaternion = Vector
 
 if $UNITTEST
+  # Use much heavier compare functions to accomodate for Float comparisons
 class Matrix
   #
   # Not really intended for general consumption.
@@ -149,4 +144,39 @@ module Pling
   def deg_to_rad(g)
     g * (Math::PI/180.0)
   end
+  
+  
+  # Klasse zur Implementation einer verzeigerten Kantenliste.
+
+  class Edge
+
+    # groesste y-Koordinate der Kante.
+    attr_accessor y_top;
+
+    # Schnittpunkt der Scan-Line mit der Kante.
+    attr_accessor x_int;
+
+    # y-Ausdehnung der Kante.
+    attr_accessor delta_y;
+
+    # inverse Steigung 1/s der Kante.
+    attr_accessor delta_x;
+
+    # naechste Kante in der Kantenliste.
+    attr_accessor next_edge;
+
+    # Erzeugt ein Objekt vom Typ Kante mit den uebergebenen Parametern.
+    # next ist die naechste Kante in der Liste.
+
+    def initialize(y_top = 0, x_int = 0.0, delta_y = 0, 
+                  delta_x = 0.0, next_edge = nil)
+      @y_top     = y_top
+      @x_int     = x_int
+      @delta_y   = delta_y
+      @delta_x   = delta_x
+      @next_edge = next_edge
+    end
+    
+  end # end class Edge
+  
 end

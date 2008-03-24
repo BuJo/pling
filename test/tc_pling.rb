@@ -83,7 +83,7 @@ TBL
       a.out = ""
     end
     
-    renderer = Renderer.new(ppm)
+    renderer = SimpleRenderer.new(ppm)
     
     line = Line.new(Quaternion[1,1], Quaternion[5,9], 255,0,255)
     
@@ -101,7 +101,7 @@ TBL
       a.out = ""
     end
     
-    renderer = Renderer.new(ppm)
+    renderer = SimpleRenderer.new(ppm)
     
     poly = Polygon.new
     poly.color = [200,100,20]
@@ -121,7 +121,7 @@ TBL
       a.out = ""
     end
     
-    renderer = Renderer.new(ppm)
+    renderer = SimpleRenderer.new(ppm)
     
     poly = Polygon.new
     poly.color = [0,100,255]
@@ -147,7 +147,7 @@ TBL
       a.out = ""
     end
     
-    renderer = Renderer.new(ppm)
+    renderer = SimpleRenderer.new(ppm)
     
     circle = Circle.new(Quaternion[4,4],4)
     circle.color = [200,100,20]
@@ -160,13 +160,13 @@ TBL
   def test_renderer
     fb = Struct.new('FB', :set)
     assert_raises(RuntimeError) do
-      Renderer.new(fb)
+      SimpleRenderer.new(fb)
     end
     assert_raises(RuntimeError) do
-      Renderer.new("asdf")
+      SimpleRenderer.new("asdf")
     end
     assert_nothing_raised do
-      Renderer.new(PPM.new)
+      SimpleRenderer.new(PPM.new)
     end
   end
   
@@ -195,4 +195,16 @@ TBL
     assert_equal ref, b2 * s2 * a2
   end
   
+  
+  def test_scanline
+    renderer = SimpleRenderer.new(@ppm)
+    
+    poly = Polygon.new
+    poly.color = [200,100,20]
+    poly.points << Quaternion[0,3] << Quaternion[2,9] << Quaternion[7,6] << Quaternion[9,2]
+    
+    renderer.objects << poly
+    
+    renderer.render_objects
+  end
 end

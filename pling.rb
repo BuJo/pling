@@ -6,51 +6,7 @@ require 'matrix'
 require 'util'
 require 'model'
 require 'framebuffer'
-
-module Pling
-  
-  class Renderer
-    attr_accessor :framebuffer
-    attr_accessor :objects
-    attr_reader :ttr
-    
-    def initialize(fb)
-      raise "Buffer must respond to :set" unless fb.respond_to?(:set)
-      raise "Buffer must implement #set correctly" unless fb.method(:set).arity == -3
-      @framebuffer = fb
-    end
-    
-    def objects
-      @objects ||= []
-    end
-    
-    def render_objects
-      a = Time.now
-      objects.each do |o|
-        if o.kind_of?(Array)
-          obj = o.shift
-          o, translations = obj, o
-          
-          translations.each do |t|
-            o.translate(t)
-          end
-        end
-        o.write(self)
-      end
-      @ttr = Time.now - a
-    end
-    
-    def set(x, y, *colors)
-      @framebuffer.set(x, y, *colors)
-    end
-    
-    def save(fn)
-      @framebuffer.save(fn)
-    end
-    
-  end
-  
-end
+require 'renderer'
 
 if $0 == __FILE__
   include Pling
