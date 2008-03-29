@@ -1,6 +1,10 @@
 require 'rake/clean'
 require 'rake/testtask'
 
+SDLPROG = 'img'
+SDLSRC = FileList['sdl_simple.c']
+SDLOBJ = SDLSRC.ext('o')
+
 CLEAN.include('*.png', '*.o')
 CLOBBER.include('*.pnm', 'a.out')
 
@@ -17,18 +21,11 @@ rule '.png' => '.pnm' do |t|
   sh "pnmtopng #{t.source} > #{t.name}"
 end
 
-# other
-
-SDLPROG = 'a.out'
-SDLSRC = FileList['sdl_simple.c']
-SDLOBJ = SDLSRC.ext('o')
-SDLOBJ << '/sw/lib/libSDLmain.a'
-
-task :sdl => ['a.out']
+task :sdl => [SDLPROG]
 
 CC = "gcc"
-CFLAGS = " -g -O2 -Wall -I/sw/include #{`sdl-config --cflags`.chomp} #{`pkg-config cairo --cflags`.chomp} "
-LDFLAGS =  " -Wall -L/sw/lib #{`sdl-config --libs`.chomp} #{`pkg-config cairo --libs`.chomp} -lSDL_image-1.2.0 "
+CFLAGS = "-g -O2 -Wall -I/sw/include #{`sdl-config --cflags`.chomp}"
+LDFLAGS =  "-Wall -L/sw/lib #{`sdl-config --libs`.chomp} -lSDL_image-1.2.0"
 
 rule '.o' => '.c' do |t|
   sh "#{CC} #{CFLAGS} -c -o #{t.name} #{t.source}"
@@ -41,5 +38,5 @@ end
 
 Rake::TestTask.new do |t|
   t.test_files = FileList['test/**/tc_*.rb']
-  t.verbose = true
+  t.verbose = false
 end

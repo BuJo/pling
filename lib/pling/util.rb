@@ -151,19 +151,19 @@ module Pling
   class Edge
 
     # groesste y-Koordinate der Kante.
-    attr_accessor y_top;
+    attr_accessor :y_top;
 
     # Schnittpunkt der Scan-Line mit der Kante.
-    attr_accessor x_int;
+    attr_accessor :x_int;
 
     # y-Ausdehnung der Kante.
-    attr_accessor delta_y;
+    attr_accessor :delta_y;
 
     # inverse Steigung 1/s der Kante.
-    attr_accessor delta_x;
+    attr_accessor :delta_x;
 
     # naechste Kante in der Kantenliste.
-    attr_accessor next_edge;
+    attr_accessor :next_edge;
 
     # Erzeugt ein Objekt vom Typ Kante mit den uebergebenen Parametern.
     # next ist die naechste Kante in der Liste.

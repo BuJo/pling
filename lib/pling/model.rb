@@ -1,4 +1,4 @@
-require 'util'
+require 'pling/util'
 
 module Pling
   

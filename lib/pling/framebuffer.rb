@@ -1,4 +1,4 @@
-require 'util'
+require 'pling/util'
 
 module Pling
   
@@ -59,10 +59,19 @@ module Pling
       @data[y][x] = *args
     end
     
+    def write
+      @out = header
+      @out << self.send("write_#{options[:mode]}".to_sym)
+      
+      return @out
+    end
     def write_binary
       raise NotImplementedError
     end
     def write_ascii
+      raise NotImplementedError
+    end
+    def allocate_data
       raise NotImplementedError
     end
   end
@@ -119,7 +128,8 @@ module Pling
       
       for row in (0...height) do
         for col in (0...width) do
-          out << @data[row][col].join(' ')
+          #out << (@data[row][col] % 0xFF).to_s
+          out << @data[row][col].to_s
           out << ' ' if col < (width - 1)
         end
         out << "\n"
@@ -128,6 +138,9 @@ module Pling
       return out
     end
     
+    def allocate_data
+      @data = Array.new(height) { Array.new(width) { 0 } }
+    end
   end
   
   # Color Image
@@ -162,13 +175,6 @@ module Pling
       y = (height-1) - y
       
       @data[y][x] = color
-    end
-    
-    def write
-      @out = header
-      @out << self.send("write_#{options[:mode]}".to_sym)
-      
-      return @out
     end
     
     def write_binary

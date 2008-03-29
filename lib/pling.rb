@@ -3,10 +3,10 @@
 require 'tempfile'
 require 'matrix'
 
-require 'util'
-require 'model'
-require 'framebuffer'
-require 'renderer'
+require 'pling/util'
+require 'pling/model'
+require 'pling/framebuffer'
+require 'pling/renderer'
 
 if $0 == __FILE__
   include Pling
